@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="calculadora.css">
+    </head>
+    <body>
+        <div class="cWrap">
+            <div class="calc" role="application" aria-label="Calculadora">
+                <div class="visor">
+                    <div class="hist" id="hist"></div>
+                    <div class="rst" id="rst">0</div>
+                </div>
+            <div class="bts">
+                <button class="bt btclear" onclick="clearA()">C</button>
+                <button class="bt btclear" onclick="clearR()">v</button>
+                <button class="bt btop" onclick="op('*')">*</button>
+                <button class="bt btop" onclick="op('/')">/</button>
+                <button class="bt btnum" onclick="num('9')">9</button>
+                <button class="bt btnum" onclick="num('8')">8</button>
+                <button class="bt btnum" onclick="num('7')">7</button>
+                <button class="bt btop" onclick="op('-')">-</button>
+                <button class="bt btnum" onclick="num('6')">6</button>
+                <button class="bt btnum" onclick="num('5')">5</button>
+                <button class="bt btnum" onclick="num('4')">4</button>
+                <button class="bt btop" onclick="op('+')">+</button>
+                <button class="bt btnum" onclick="num('3')">3</button>
+                <button class="bt btnum" onclick="num('2')">2</button>
+                <button class="bt btnum" onclick="num('1')">1</button>
+                <button class="bt btop" onclick="op('%')">%</button>
+                <button class="bt btnum btzr" onclick="num('0')">0</button>
+                <button class="bt btnum" onclick="com()">,</button>
+                <button class="bt bteq" onclick="eq()">=</button>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+<script>
+    let est = {atual:'0', anterior:' ', operador:' ', newNum: false};
+    function update(){
+        const res = document.getElementById('rst');
+        const his = document.getElementById('hist');
+        res.textContent = est.atual;
+        his.textContent = est.anterior && est.operador ? est.anterior + ' ' + est.operador : '';
+    }
+    function num(v){
+        if(est.newNum){
+            est.atual = v;
+            est.newNum = false;
+        } else { est.atual = est.atual === '0'? v : est.atual + v;}
+        update();
+    }
+    function op(o){
+        if(est.operador && !est.newNum){
+            calcular = false;
+        }
+        est.anterior = est.atual;
+        est.operador = o;
+        est.newNum = true;
+        update();
+    }
+    function eq(fechar=true){
+        if(!est.operador || est.newNum){
+            return;
+        }
+        const a = parseFloat(est.atual);
+        const b = parseFloat(est.anterior);
+        let res;
+        switch(est.operador){
+            case '+':
+                res = b + a;
+                break;
+            case '-':
+                res = b - a;
+                break;
+            case '*':
+                res = b*a;
+                break;
+            case '/':
+                if(a == 0){
+                    'erro';
+                } else {
+                    res = b/a;
+                }
+                break;
+            case '%':
+                res = b * (a/100);
+                break;
+        }
+        if(res!== 'erro'){
+            const str = res.toString();
+            est.atual = str;
+        }
+        if(fechar){
+            est.anterior = ' ';
+            est.operador = ' ';
+        }
+        est.newNum = true;
+        update();
+    }
+    function clearA(){
+        est = {atual:'0', anterior:'0', operador:'0', newNum: false};
+        update();
+    }
+    function clearR(){
+        if(est.newNum || est.atual === 'erro'){
+            est.atual = '0';
+            est.newNum = false;
+        } else{
+            if(est.atual.length > 1){
+                est.atual = est.atual.slice(0, -1);
+            } else {
+                est.atual = '0';
+            }
+        }
+        update();
+    }
+</script>
+
